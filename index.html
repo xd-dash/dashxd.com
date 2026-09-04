@@ -13,17 +13,41 @@
       <div class="logo-frame"></div>
     </header>
 
-    <nav class="link-stack" aria-label="Primary links">
-      <a class="link-button" href="#" data-target="console">console</a>
-      <a class="link-button" href="#" data-target="xd.run">xd.run</a>
-      <a class="link-button" href="#" data-target="logma.sh">logma.sh</a>
-      <a class="link-button" href="#" data-target="chi.ninja">chi.ninja</a>
-      <a class="link-button" href="#" data-target="gospace.cloud">gospace.cloud</a>
-      <a class="link-button" href="#" data-target="gateway.us-west1.farcaster.world">gateway.us-west1.farcaster.world</a>
-      <a class="link-button" href="#" data-target="deploy.fatline.to">deploy.fatline.to</a>
-      <a class="link-button" href="#" data-target="firekv.com">firekv.com</a>
-      <a class="link-button" href="#" data-target="oidc.auth.net.im">oidc.auth.net.im</a>
-    </nav>
+    <section class="menu-shell" aria-label="dash xd menu">
+      <button
+        class="link-button console-toggle"
+        type="button"
+        data-console-toggle
+        aria-expanded="false"
+        aria-controls="console-panel"
+      >&gt;_</button>
+
+      <nav class="link-stack" aria-label="Primary links" data-primary-links>
+        <a class="link-button" href="#" data-outbound-target="dash.xd.run">dash.xd.run</a>
+        <a class="link-button" href="#" data-outbound-target="logma.sh">logma.sh</a>
+        <a class="link-button" href="#" data-outbound-target="chi.ninja">chi.ninja</a>
+        <a class="link-button" href="#" data-outbound-target="gospace.cloud">gospace.cloud</a>
+        <a class="link-button" href="#" data-outbound-target="gateway.us-west1.farcaster.world">gateway.us-west1.farcaster.world</a>
+        <a class="link-button" href="#" data-outbound-target="deploy.fatline.to">deploy.fatline.to</a>
+        <a class="link-button" href="#" data-outbound-target="firekv.com">firekv.com</a>
+        <a class="link-button" href="#" data-outbound-target="oidc.auth.net.im">oidc.auth.net.im</a>
+      </nav>
+
+      <section class="console-panel" id="console-panel" data-console-panel hidden aria-label="dash xd console">
+        <div class="chat-transcript" data-chat-transcript role="log" aria-live="polite" aria-relevant="additions"></div>
+        <label class="composer-label" for="chat-composer">message dash xd</label>
+        <textarea
+          class="chat-composer"
+          id="chat-composer"
+          data-chat-composer
+          rows="3"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+          placeholder="type here xd"
+        ></textarea>
+      </section>
+    </section>
 
     <footer class="site-footer">
       <a href="https://github.com/dash-xd" target="_blank" rel="noopener noreferrer">github.com/dash-xd</a>
