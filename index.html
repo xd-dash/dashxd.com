@@ -23,7 +23,7 @@
       >&gt;_</button>
 
       <nav class="link-stack" aria-label="Primary links" data-primary-links>
-        <a class="link-button" href="#" data-outbound-target="dash.xd.run">dash.xd.run</a>
+        <a class="link-button" href="#" data-outbound-target="console.dash.xd.run">console.dash.xd.run</a>
         <a class="link-button" href="#" data-outbound-target="logma.sh">logma.sh</a>
         <a class="link-button" href="#" data-outbound-target="chi.ninja">chi.ninja</a>
         <a class="link-button" href="#" data-outbound-target="gospace.cloud">gospace.cloud</a>
@@ -34,25 +34,49 @@
       </nav>
 
       <section class="console-panel" id="console-panel" data-console-panel hidden aria-label="dash xd console">
-        <div class="chat-transcript" data-chat-transcript role="log" aria-live="polite" aria-relevant="additions"></div>
-        <label class="composer-label" for="chat-composer">message dash xd</label>
-        <textarea
-          class="chat-composer"
-          id="chat-composer"
-          data-chat-composer
-          rows="3"
-          autocomplete="off"
-          autocapitalize="off"
-          spellcheck="false"
-          placeholder="type here xd"
-        ></textarea>
+        <div
+          class="chat-transcript"
+          data-chat-transcript
+          role="log"
+          aria-live="polite"
+          aria-relevant="additions"
+          aria-label="conversation"
+        ></div>
+
+        <form class="chat-composer-shell" data-chat-form>
+          <label class="composer-label" for="chat-composer">message dash xd</label>
+          <textarea
+            class="chat-composer"
+            id="chat-composer"
+            data-chat-composer
+            rows="3"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            placeholder="type here xd"
+          ></textarea>
+          <button class="chat-submit" type="submit">send</button>
+        </form>
       </section>
     </section>
 
     <footer class="site-footer">
-      <a href="https://github.com/dash-xd" target="_blank" rel="noopener noreferrer">github.com/dash-xd</a>
-      <span aria-hidden="true">·</span>
-      <a href="https://github.com/xd-dash" target="_blank" rel="noopener noreferrer">github.com/xd-dash</a>
+      <div class="footer-links">
+        <a href="https://github.com/dash-xd" target="_blank" rel="noopener noreferrer">github.com/dash-xd</a>
+        <span class="git-mark" aria-label="git" title="git">
+          <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
+            <path d="M4.6 10.6 10.6 4.6a2 2 0 0 1 2.8 0l6 6a2 2 0 0 1 0 2.8l-6 6a2 2 0 0 1-2.8 0l-6-6a2 2 0 0 1 0-2.8Z"/>
+            <circle cx="9" cy="9" r="1.25"/>
+            <circle cx="15" cy="15" r="1.25"/>
+            <circle cx="15" cy="9" r="1.25"/>
+            <path d="M10 9h4M15 10v3.75M9.85 9.85l4.3 4.3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <a href="https://github.com/xd-dash" target="_blank" rel="noopener noreferrer">github.com/xd-dash</a>
+      </div>
+
+      <div class="footer-meta" data-worker-meta aria-live="polite">cloudflare worker · dashxd-com</div>
+      <div class="footer-legal">© 2026 dash xd · all rights reserved</div>
     </footer>
   </main>
   <script src="app.js"></script>
