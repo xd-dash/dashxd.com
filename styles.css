@@ -130,12 +130,21 @@ textarea {
 
 .chat-message--bot {
   margin-right: auto;
+  margin-bottom: 0;
   text-align: left;
+}
+
+.chat-message--bot + .chat-message--user {
+  margin-top: 16px;
 }
 
 .chat-message--user {
   margin-left: auto;
   text-align: right;
+}
+
+.chat-message--user + .chat-message--bot {
+  margin-top: 16px;
 }
 
 .chat-composer-shell {
