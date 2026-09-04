@@ -103,6 +103,7 @@ textarea {
   border: 2px solid var(--black);
   background: var(--white);
   padding: 12px;
+  box-shadow: 6px 6px 0 var(--magenta);
 }
 
 .chat-transcript {
@@ -115,14 +116,14 @@ textarea {
   border: 1px solid #d7d7d7;
   background: var(--white);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size: .9rem;
-  line-height: 1.55;
+  font-size: .78rem;
+  line-height: 1.25;
   scrollbar-width: thin;
 }
 
 .chat-message {
   width: 88%;
-  margin: 0 0 20px;
+  margin: 0 0 16px;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
@@ -189,6 +190,7 @@ textarea {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   font-weight: 800;
   cursor: pointer;
+  transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease, transform 140ms ease, box-shadow 140ms ease;
 }
 
 .chat-submit:hover,
@@ -197,6 +199,13 @@ textarea {
   color: var(--black);
   background: var(--cyan);
   outline: none;
+  transform: translate(-3px, -3px);
+  box-shadow: 6px 6px 0 var(--magenta);
+}
+
+.chat-submit:active {
+  transform: translate(0, 0);
+  box-shadow: 2px 2px 0 var(--magenta);
 }
 
 .site-footer {
@@ -271,5 +280,6 @@ textarea {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .link-button { transition: none; }
+  .link-button,
+  .chat-submit { transition: none; }
 }
