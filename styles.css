@@ -50,7 +50,7 @@ body {
   min-height: 46px;
   place-items: center;
   padding: 10px 20px;
-  border: 2px solid var(--black);
+  border: 2px solid var(--cyan);
   border-radius: 0;
   color: var(--white);
   background: var(--black);
@@ -59,11 +59,12 @@ body {
   letter-spacing: .04em;
   text-align: center;
   text-decoration: none;
-  transition: background-color 140ms ease, color 140ms ease, transform 140ms ease, box-shadow 140ms ease;
+  transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease, transform 140ms ease, box-shadow 140ms ease;
 }
 
 .link-button:hover,
 .link-button:focus-visible {
+  border-color: var(--black);
   color: var(--black);
   background: var(--cyan);
   outline: none;
