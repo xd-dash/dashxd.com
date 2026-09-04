@@ -168,28 +168,26 @@ textarea {
   font-size: .9rem;
   line-height: 1.4;
   outline: none;
-  transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease, transform 140ms ease, box-shadow 140ms ease;
+  transition: transform 140ms ease, box-shadow 140ms ease;
 }
 
 .chat-composer::placeholder {
   color: #b8b8b8;
-  text-align: center;
+  text-align: left;
   opacity: 1;
+}
+
+.chat-composer:focus::placeholder {
+  color: transparent;
 }
 
 .chat-composer:hover,
 .chat-composer:focus-visible {
-  border-color: var(--black);
-  color: var(--black);
-  background: var(--cyan);
+  color: var(--white);
+  background: var(--black);
   outline: none;
   transform: translate(-3px, -3px);
   box-shadow: 6px 6px 0 var(--magenta);
-}
-
-.chat-composer:hover::placeholder,
-.chat-composer:focus-visible::placeholder {
-  color: var(--black);
 }
 
 .site-footer {
