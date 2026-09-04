@@ -1,16 +1,22 @@
 const PLACEHOLDER_ORIGIN = 'https://placeholder.invalid'
+const BOT_MESSAGE_DELAY_MS = 650
 
-const INITIAL_BOT_MESSAGE = `hi xd
-im dash xd
-ask me what i can do xd
-...`
+const INITIAL_BOT_MESSAGES = [
+  'hi xd',
+  'im dash xd',
+  'ask me what i can do xd',
+]
 
-const FIRST_MAINTENANCE_REPLY = `sorry xd
-im under maintenance xd
-come back soon xd`
+const FIRST_MAINTENANCE_REPLY = [
+  'sorry xd',
+  'im under maintenance xd',
+  'come back soon xd',
+]
 
-const MAINTENANCE_REPLY = `under maintenance xd
-come back soon xd`
+const MAINTENANCE_REPLY = [
+  'under maintenance xd',
+  'come back soon xd',
+]
 
 function buildOutboundUrl(target) {
   const source = new URL(window.location.href)
@@ -29,9 +35,15 @@ function buildOutboundUrl(target) {
   return outbound.toString()
 }
 
-function createChatController({ toggle, panel, transcript, composer, primaryLinks }) {
+function delay(milliseconds) {
+  return new Promise((resolve) => window.setTimeout(resolve, milliseconds))
+}
+
+function createChatController({ toggle, panel, transcript, composer, form, primaryLinks }) {
   let isOpen = false
+  let hasStarted = false
   let replyCount = 0
+  let botQueue = Promise.resolve()
 
   function scrollTranscriptToBottom() {
     transcript.scrollTop = transcript.scrollHeight
@@ -45,6 +57,17 @@ function createChatController({ toggle, panel, transcript, composer, primaryLink
     scrollTranscriptToBottom()
   }
 
+  function queueBotMessages(messages) {
+    botQueue = botQueue.then(async () => {
+      for (const message of messages) {
+        await delay(BOT_MESSAGE_DELAY_MS)
+        appendMessage('bot', message)
+      }
+    })
+
+    return botQueue
+  }
+
   function setOpen(nextOpen) {
     isOpen = nextOpen
     toggle.textContent = isOpen ? '<' : '>_'
@@ -52,10 +75,15 @@ function createChatController({ toggle, panel, transcript, composer, primaryLink
     primaryLinks.hidden = isOpen
     panel.hidden = !isOpen
 
-    if (isOpen) {
-      composer.focus()
-      scrollTranscriptToBottom()
+    if (!isOpen) return
+
+    if (!hasStarted) {
+      hasStarted = true
+      queueBotMessages(INITIAL_BOT_MESSAGES)
     }
+
+    composer.focus()
+    scrollTranscriptToBottom()
   }
 
   function submitMessage() {
@@ -67,16 +95,16 @@ function createChatController({ toggle, panel, transcript, composer, primaryLink
 
     const reply = replyCount === 0 ? FIRST_MAINTENANCE_REPLY : MAINTENANCE_REPLY
     replyCount += 1
-
-    window.setTimeout(() => {
-      appendMessage('bot', reply)
-    }, 180)
+    queueBotMessages(reply)
   }
-
-  appendMessage('bot', INITIAL_BOT_MESSAGE)
 
   toggle.addEventListener('click', () => {
     setOpen(!isOpen)
+  })
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault()
+    submitMessage()
   })
 
   composer.addEventListener('keydown', (event) => {
@@ -100,12 +128,38 @@ function initializeConsole() {
   const panel = document.querySelector('[data-console-panel]')
   const transcript = document.querySelector('[data-chat-transcript]')
   const composer = document.querySelector('[data-chat-composer]')
+  const form = document.querySelector('[data-chat-form]')
   const primaryLinks = document.querySelector('[data-primary-links]')
 
-  if (!toggle || !panel || !transcript || !composer || !primaryLinks) return
+  if (!toggle || !panel || !transcript || !composer || !form || !primaryLinks) return
 
-  createChatController({ toggle, panel, transcript, composer, primaryLinks })
+  createChatController({ toggle, panel, transcript, composer, form, primaryLinks })
+}
+
+async function initializeWorkerMeta() {
+  const footer = document.querySelector('[data-worker-meta]')
+  if (!footer) return
+
+  try {
+    const response = await fetch('/meta', { cache: 'no-store' })
+    if (!response.ok) return
+
+    const meta = await response.json()
+    const details = [
+      `cloudflare worker · ${meta.service}`,
+      meta.colo ? `colo ${meta.colo}` : null,
+      meta.httpProtocol || null,
+      meta.tlsVersion || null,
+      meta.country ? `country ${meta.country}` : null,
+      meta.ray ? `ray ${meta.ray}` : null,
+    ].filter(Boolean)
+
+    footer.textContent = details.join(' · ')
+  } catch {
+    // Keep the static fallback when edge metadata is unavailable.
+  }
 }
 
 initializeOutboundLinks()
 initializeConsole()
+initializeWorkerMeta()
