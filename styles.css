@@ -20,7 +20,7 @@ body {
 .page-shell {
   width: min(100% - 40px, 360px);
   margin: 0 auto;
-  padding: 64px 0 72px;
+  padding: 64px 0 48px;
 }
 
 .brand { display: flex; justify-content: center; }
@@ -75,6 +75,26 @@ body {
 .link-button:active {
   transform: translate(0, 0);
   box-shadow: 2px 2px 0 var(--magenta);
+}
+
+.site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 48px;
+  font-size: .8rem;
+  line-height: 1.5;
+}
+
+.site-footer a {
+  color: var(--black);
+  text-underline-offset: 3px;
+}
+
+.site-footer a:hover,
+.site-footer a:focus-visible {
+  color: var(--magenta);
 }
 
 @media (max-width: 480px) {
