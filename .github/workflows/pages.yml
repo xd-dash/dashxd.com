@@ -54,10 +54,10 @@ jobs:
           sha = os.environ['GITHUB_SHA']
           html_path = Path('_site/index.html')
           html = html_path.read_text(encoding='utf-8')
-          target = '<img id="logo" alt="dashxd logo">'
-          replacement = f'<img id="logo" src="{logo}" alt="dashxd logo">'
+          target = '<div class="logo-frame"></div>'
+          replacement = f'<div class="logo-frame"><img src="{logo}" alt="dashxd logo"></div>'
           if target not in html:
-              raise SystemExit('logo placeholder not found in index.html')
+              raise SystemExit('logo frame not found in index.html')
           html = html.replace(target, replacement, 1)
           html = html.replace('styles.css', f'styles.css?v={sha}', 1)
           html = html.replace('app.js', f'app.js?v={sha}', 1)
