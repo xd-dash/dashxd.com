@@ -18,7 +18,7 @@ body {
 }
 
 .page-shell {
-  width: min(100% - 40px, 420px);
+  width: min(100% - 40px, 360px);
   margin: 0 auto;
   padding: 64px 0 72px;
 }
@@ -82,7 +82,7 @@ body {
 }
 
 @media (max-width: 480px) {
-  .page-shell { width: min(100% - 48px, 420px); padding-top: 44px; }
+  .page-shell { width: min(100% - 48px, 360px); padding-top: 44px; }
   .logo-frame { width: 112px; height: 112px; }
   .link-stack { margin-top: 56px; }
 }
