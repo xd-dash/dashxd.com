@@ -28,20 +28,15 @@ body {
 .logo-frame {
   width: 132px;
   height: 132px;
-  border: 4px solid var(--black);
-  border-radius: 50%;
-  overflow: hidden;
   display: grid;
   place-items: center;
-  background: var(--white);
-  box-shadow: -6px 0 0 var(--cyan), 6px 0 0 var(--magenta);
 }
 
 .logo-frame img {
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .link-stack {
