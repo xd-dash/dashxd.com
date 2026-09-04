@@ -139,10 +139,7 @@ textarea {
 }
 
 .chat-composer-shell {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 8px;
-  align-items: stretch;
+  display: block;
 }
 
 .composer-label {
@@ -171,30 +168,17 @@ textarea {
   font-size: .9rem;
   line-height: 1.4;
   outline: none;
+  transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease, transform 140ms ease, box-shadow 140ms ease;
 }
 
 .chat-composer::placeholder {
   color: #b8b8b8;
+  text-align: center;
+  opacity: 1;
 }
 
-.chat-composer:focus {
-  border-color: var(--magenta);
-}
-
-.chat-submit {
-  min-width: 70px;
-  border: 2px solid var(--cyan);
-  border-radius: 0;
-  color: var(--white);
-  background: var(--black);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-weight: 800;
-  cursor: pointer;
-  transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease, transform 140ms ease, box-shadow 140ms ease;
-}
-
-.chat-submit:hover,
-.chat-submit:focus-visible {
+.chat-composer:hover,
+.chat-composer:focus-visible {
   border-color: var(--black);
   color: var(--black);
   background: var(--cyan);
@@ -203,9 +187,9 @@ textarea {
   box-shadow: 6px 6px 0 var(--magenta);
 }
 
-.chat-submit:active {
-  transform: translate(0, 0);
-  box-shadow: 2px 2px 0 var(--magenta);
+.chat-composer:hover::placeholder,
+.chat-composer:focus-visible::placeholder {
+  color: var(--black);
 }
 
 .site-footer {
@@ -275,11 +259,9 @@ textarea {
   .logo-frame { width: 112px; height: 112px; }
   .menu-shell { margin-top: 56px; }
   .chat-transcript { min-height: 230px; height: 250px; }
-  .chat-composer-shell { grid-template-columns: 1fr; }
-  .chat-submit { min-height: 42px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .link-button,
-  .chat-submit { transition: none; }
+  .chat-composer { transition: none; }
 }
