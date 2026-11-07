@@ -1,0 +1,4 @@
+# Copy to a private, explicitly reviewed tfvars file. Do not commit live records
+# without reconciling their exact Cloudflare IDs and importing each into state.
+# The empty map intentionally does not adopt or create DNS records.
+records = {}
