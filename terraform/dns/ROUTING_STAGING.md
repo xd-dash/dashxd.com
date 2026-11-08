@@ -1,16 +1,16 @@
 # Routing staging map
 
-This is a review aid for DNS routing; it does not create or import records. The Terraform resource map and `imports.json` remain empty.
+This is a review aid for DNS routing; it does not create or import records. The Terraform default resource map and `imports.json` remain empty; the example variables file contains one staged candidate.
 
 ## Known hostname ownership
 
-| Hostname | Last known routing | Staging treatment |
+| Hostname | Routing in 2026-11-08 snapshot | Staging treatment |
 | --- | --- | --- |
 | `dashxd.com`, `www.dashxd.com` | Existing Custom Domains for the dashxd.com GitHub Pages site | Leave unchanged; do not recreate as DNS resources |
 | `firekv.dashxd.com`, `kv.dashxd.com` | Existing FireKV Worker Custom Domains | Leave unchanged; FireKV deployment owns these |
-| Names with proxied AAAA `100::` records | Last seen in the 2026-09-16 DNS snapshot; likely edge/Worker placeholders, but the corresponding routes were not captured | Do not import or repoint until the Worker route mapping is confirmed |
-| Names with CNAME `ghs.googlehosted.com` | Google-hosted service endpoints in the last captured snapshot | Leave unchanged until each service owner and replacement target is confirmed |
-| `debroglie.dashxd.com` | Proxied A record to `35.212.217.109` in the last captured snapshot | Treat as an existing live service, not a placeholder |
+| Proxied AAAA `100::` records | Present for `base64-encode`, `base64-encoder`, `base64`, `easy-encoder`, `easyencoder`, `ez-encoder`, `ezencoder`, `dashxd.com`, `www`, `firekv`, `kv`, `reddit`, `www.reddit`, `sandbox.auth`, and `veda`; one separate Worker Route was inventoried | Keep existing records unchanged; only the missing auth-callback hostname is staged below |
+| CNAMEs to `ghs.googlehosted.com` | Google-hosted endpoints include versioned auth/firecache/ratelimiter APIs, `chats`, `firebase-auth`, `logma`, and `token` | Leave unchanged until each service owner and replacement target is confirmed |
+| `debroglie.dashxd.com` | Proxied A record to `35.212.217.109` | Treat as an existing live service, not a placeholder |
 
 The latest read-only DNS snapshot was captured on 2026-11-08 at 07:40:41Z and contains 35 records. Huram scoped its short-lived child token to the pinned zone ID and revoked it after capture. This snapshot is the basis for the candidate below.
 
@@ -26,7 +26,7 @@ A new proxied `AAAA` record for `api.v0.0.1.auth.util.dashxd.com` with content `
 
 ## Placeholder routing rule
 
-A placeholder target must still be a deliberate destination. A proxied `100::` DNS record only supplies a Cloudflare-proxied DNS answer; by itself it does not identify which Worker handles the request. Worker Custom Domains and Worker Routes are separate routing configuration and are outside this DNS-only Terraform root.
+A placeholder target must still be a deliberate destination. A proxied `100::` DNS record supplies the Cloudflare-proxied DNS answer needed by a Worker Route, but it does not identify the Worker. Worker Routes are separately configured; the live route inventory identified the `auth-callback` route listed above.
 
 For a hostname intended to serve a future Worker, stage both pieces explicitly:
 1. the DNS record needed for Cloudflare proxying, if the chosen Worker routing mode requires one; and
