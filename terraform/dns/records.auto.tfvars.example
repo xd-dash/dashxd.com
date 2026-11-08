@@ -1,4 +1,16 @@
-# Copy to a private, explicitly reviewed tfvars file. Do not commit live records
-# without reconciling their exact Cloudflare IDs and importing each into state.
-# The empty map intentionally does not adopt or create DNS records.
-records = {}
+# Example desired DNS configuration. Copy to a private tfvars file only after
+# reviewing the routing plan and initializing the FireKV state scope.
+#
+# This new hostname has no existing DNS record to import. The existing
+# Cloudflare Worker Route api.v0.0.1.auth.util.dashxd.com/ targets auth-callback.
+# The proxied 100:: address is only an origin placeholder for that route.
+records = {
+  auth_callback_api_v001 = {
+    name    = "api.v0.0.1.auth.util.dashxd.com"
+    type    = "AAAA"
+    content = "100::"
+    ttl     = 1
+    proxied = true
+    comment = "Placeholder origin for the existing auth-callback Worker Route"
+  }
+}
