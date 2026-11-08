@@ -10,8 +10,8 @@ Workers KV is eventually consistent. The Worker does not provide Terraform LOCK/
 
 1. Capture fresh DNS record IDs, content, TTL, proxy status, priority, and settings with a read-only Cloudflare token.
 2. Select one record at a time and review its exact Terraform configuration. Do not import apex or `www` records by default.
-3. Initialize the DNS management root only against the intended GCS bucket and a dedicated prefix. Verify the bucket, versioning, access scope, and state lineage before any state write.
-4. Back up the GCS state and verify the backup can be read. Stop other writers during import and plan review.
+3. Initialize the DNS management root through Huram's authenticated FireKV backend with a dedicated state scope. Confirm the authenticated state endpoint is readable before any import.
+4. Keep one active writer for the scope. Because KV reads can lag writes, poll the state endpoint within the qualified window before concluding state is missing.
 5. Do not run an apply. Huram has no DNS apply workflow.
 
 ## Stage an import
@@ -30,17 +30,15 @@ terraform validate
 
 The import-selection checker prints a review document only. It does not execute Terraform import. No CI workflow imports records.
 
-## GCS-backed adoption
+## FireKV-backed adoption
 
-After the GCS backend is initialized with Huram WIF and its backup is verified:
+After FireKV state access is authenticated through Huram and the dedicated scope is confirmed:
 
-1. Check `terraform state list` and `terraform state pull`; compare lineage, serial, and resource addresses with the backup.
+1. Check `terraform state list` and use `terraform state pull` to verify the expected state lineage and resource addresses. Poll reads for bounded eventual visibility.
 2. Confirm the exact record ID and pinned provider import format.
-3. Import one selected record into GCS state.
+3. Import one selected record into the FireKV-backed state.
 4. Run `terraform plan -refresh-only`, followed by an ordinary `terraform plan`.
 5. Review all create, replace, and delete actions. Stop on any unexpected difference; do not apply.
-
-If FireKV later passes production consistency and recovery qualification, evaluate a separately backed-up and reviewed state migration from GCS. Do not migrate simply because the authentication route works.
 
 The management root is `terraform/dns`. The independent `terraform/dns-inspect` root performs read-only DNS inventory with ephemeral local state.
 
@@ -49,6 +47,6 @@ The management root is `terraform/dns`. The independent `terraform/dns-inspect` 
 - DNS Terraform static validation and read-only live DNS inspection: qualified.
 - FireKV local OIDC plus Terraform CLI interoperability: qualified.
 - FireKV deployed and real OIDC exchange: successful.
-- FireKV production state integrity: **failed; do not use for DNS state**.
-- GCS-backed DNS state: use through Huram WIF before importing.
+- FireKV authenticated Terraform sandbox qualification: passed with bounded polling; no lock protocol, so one writer per scope.
+- FireKV-backed DNS state: not initialized; DNS inventory and routing targets still need a fresh, reviewed selection.
 - DNS imports, migration, and apply: not performed.
