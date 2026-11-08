@@ -2,7 +2,7 @@
 
 This root owns **only explicitly selected Cloudflare DNS records** in the pinned `dashxd.com` zone. It does not own Worker source, Custom Domains, Workers Routes, Cloudflare Access, the public FireKV Worker, or the private tfstate service.
 
-The default `records = {}` creates no resources. Never populate records from a stale inventory or bulk-import all 35 existing records. Existing `dashxd.com` and `www.dashxd.com` Custom Domains are already qualified and must not be changed to adopt DNS records. The existing proxied `100::` AAAA records remain out of scope until their purpose is established.
+The default `records = {}` creates no resources. Never populate records from a stale inventory or bulk-import the existing records. The most recent committed inventory is from 2026-09-16; a fresh read-only inventory attempt failed to resolve the exact zone, so refresh it before selecting existing records. Existing `dashxd.com` and `www.dashxd.com` Custom Domains are already qualified and must not be changed to adopt DNS records. The existing proxied `100::` AAAA records remain out of scope until their purpose is established.
 
 ## Offline validation
 
@@ -21,14 +21,14 @@ FireKV's Hono/Workers KV state route is deployed at `firekv.dashxd.com`. Huram's
 
 Workers KV is eventually consistent and this Worker has no Terraform LOCK/UNLOCK protocol. Use one active writer per state scope and bounded polling for reads. Huram serializes the sandbox qualification workflow; any future DNS state workflow must enforce the same single-writer rule. This sandbox result does not create DNS state or authorize imports or applies.
 
-The DNS management root uses the authenticated FireKV HTTP backend. The GCS inventory was exploratory only; GCS is not the selected Terraform state backend. The import selection remains empty, and no DNS state has been initialized.
+The DNS management root uses the authenticated FireKV HTTP backend. The GCS bucket inventory was exploratory only; FireKV is the selected Terraform state backend. The import selection remains empty, and no DNS state has been initialized.
 
 ## Controlled adoption protocol
 
 1. Capture fresh DNS record IDs, content, TTL, proxy status and any priority/settings with a read-only Cloudflare token.
 2. Choose individual DNS records and review the exact Terraform configuration, including fields that the provider might normalize.
-3. Qualify FireKV authentication, exact-byte read-after-write, restart recovery, concurrent writer rejection and a real lock protocol; preserve an independent recovery copy.
-4. Under a single authorized writer and a verified backend lineage, import each selected existing record using `terraform import 'cloudflare_dns_record.managed["key"]' '<zone_id>/<record_id>'`. Confirm the exact provider import format for the pinned version.
+3. Refresh the live DNS inventory and map each desired hostname to its actual Cloudflare Worker, Pages site, or origin. Keep placeholder destinations explicit and reviewable.
+4. Use one writer for the FireKV state scope. FireKV has no Terraform lock protocol; Huram's DNS workflow must serialize state-changing jobs and poll bounded reads. Import selected existing records using `terraform import 'cloudflare_dns_record.managed["key"]' '<zone_id>/<record_id>'` only after choosing them.
 5. Run `terraform plan -refresh-only`, then a normal read-only plan. Investigate any create, replace or delete actions. Apply requires separate authorization and is **not** implemented in Huram's staged workflow.
 
 No `terraform apply`, `terraform import`, `terraform state push`, or DNS mutation is authorized by this staging branch.
