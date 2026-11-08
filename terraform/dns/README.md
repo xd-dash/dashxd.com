@@ -17,9 +17,11 @@ Provider is pinned to Cloudflare 5.23.0; commit the generated `.terraform.lock.h
 
 ## Backend boundary
 
-The intended backend is `http` at a dedicated FireKV state scope such as `cloudflare/dashxd-dns`. Supply `TF_HTTP_ADDRESS`, `TF_HTTP_USERNAME`, and `TF_HTTP_PASSWORD` only from a qualified, short-lived authenticated session. Never commit them or pass passwords in `-backend-config`. The private FireKV Worker under `xd-dash/firekv:codex/private-tfstate-worker` is **not deployed or qualified as a production backend**. It uses eventually consistent KV and has no Terraform lock implementation. Terraform's HTTP backend supports optional LOCK/UNLOCK, but the existing Worker does not. A GitHub concurrency group does not provide cross-process locking or read-after-write consistency.
+FireKV's integrated Hono/Workers KV revision `a774c73decc382b60e7c0c8034046129b339e168` is deployed through Huram. Local Terraform qualification passed. The production qualification [run 42453260029](https://github.com/xd-dash/huram-abi-master/actions/runs/42453260029) verified the real GitHub OIDC exchange, Terraform state write and fresh-init recovery, backup/restore, alias interoperability, and scope isolation. It **failed** the final state-integrity check: an unauthenticated write correctly returned 401, but the subsequent authenticated read returned 404. Huram cleaned up the isolated qualification scope and revoked its Cloudflare child token.
 
-Until a durable, locking state service is qualified, Huram must not run a live backend plan or import against FireKV. Keep existing GCS state authoritative and separate from the future FireKV state scope. Do not initialize an empty FireKV state and accidentally plan existing infrastructure as new.
+That 404 means production FireKV is **not qualified as an authoritative Terraform state backend**. Workers KV may return stale values or cached missing-key results, and this Worker does not implement Terraform LOCK/UNLOCK. One active writer does not guarantee read-after-write visibility. Do not initialize, import, or plan managed DNS state through FireKV until production state visibility and recovery pass reliably.
+
+Keep any existing GCS-backed state authoritative. For DNS management, use Huram's Google Workload Identity Federation path and a GCS state backend until FireKV's consistency issue is resolved. There is no DNS state or imported record in this root yet. Do not point this root at a shared device-token cache bucket or initialize it against an empty FireKV scope.
 
 ## Controlled adoption protocol
 
