@@ -2,11 +2,9 @@
 
 ## Current state backend
 
-Huram deployed FireKV revision `a774c73decc382b60e7c0c8034046129b339e168` and ran production qualification [42453260029](https://github.com/xd-dash/huram-abi-master/actions/runs/42453260029). The real GitHub OIDC exchange, a Terraform state write, fresh-init recovery, backup/restore, hostname alias read, and scope-isolation check passed. The qualification failed its final integrity check: an unauthenticated POST was rejected with 401, but a subsequent authenticated GET returned 404. Huram cleaned the isolated test scope and revoked the short-lived Cloudflare deployment token. A second production check [42453688412](https://github.com/xd-dash/huram-abi-master/actions/runs/42453688412) failed when Terraform could not read back state immediately after apply; Huram removed that disposable scope in [cleanup run 42453859328](https://github.com/xd-dash/huram-abi-master/actions/runs/42453859328).
+The DNS management root is configured for FireKV's authenticated Terraform HTTP backend. Huram has qualified the deployed Hono/Workers KV path in sandbox with real GitHub OIDC and Terraform 1.14. State visibility required bounded polling; Terraform recovered it through a fresh init, the alias returned the same state, and unauthorized POST/DELETE requests were rejected without changing state bytes. A separate read-only check found valid state after an earlier 404 had resolved.
 
-Treat FireKV Workers KV as unqualified for authoritative Terraform state until state reads remain reliable after writes across requests and hostnames. The Worker has no Terraform lock endpoints, and KV can return stale values or cached missing-key results. Do not initialize a FireKV state scope, run a state-backed plan, or import DNS records into FireKV.
-
-Keep any existing GCS state authoritative. Use Huram's Google Workload Identity Federation path with a GCS state backend for managed DNS work until FireKV passes production state-integrity qualification. Do not reuse a device-token cache bucket. No DNS state has been initialized and `imports.json` remains empty.
+Workers KV is eventually consistent. The Worker does not provide Terraform LOCK/UNLOCK, so enforce one active writer per state scope and poll reads for the documented window. Do not run overlapping state writers. No DNS state has been initialized, and `imports.json` remains empty. No apply or import has been performed.
 
 ## Preconditions
 
