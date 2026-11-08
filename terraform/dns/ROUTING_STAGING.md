@@ -12,7 +12,17 @@ This is a review aid for DNS routing; it does not create or import records. The 
 | Names with CNAME `ghs.googlehosted.com` | Google-hosted service endpoints in the last captured snapshot | Leave unchanged until each service owner and replacement target is confirmed |
 | `debroglie.dashxd.com` | Proxied A record to `35.212.217.109` in the last captured snapshot | Treat as an existing live service, not a placeholder |
 
-The 2026-09-16 snapshot is historical. A fresh Huram read-only inventory attempt on 2026-11-08 failed because the delegated workflow could not resolve exactly one `dashxd.com` zone in its configured account. Refresh the inventory before using any record IDs or deciding whether a hostname is available.
+The latest read-only DNS snapshot was captured on 2026-11-08 at 07:40:41Z and contains 35 records. Huram scoped its short-lived child token to the pinned zone ID and revoked it after capture. This snapshot is the basis for the candidate below.
+
+## Existing Worker Route with missing DNS
+
+Huram's zone-scoped `Workers Routes Read` inventory found:
+
+| Pattern | Worker script | Route ID | DNS record |
+| --- | --- | --- | --- |
+| `api.v0.0.1.auth.util.dashxd.com/` | `auth-callback` | `5ad6eba475fd49d2a95c587b476adbba` | No record in the 2026-11-08 inventory |
+
+A new proxied `AAAA` record for `api.v0.0.1.auth.util.dashxd.com` with content `100::` is staged in `records.auto.tfvars.example`. The import selection remains empty because this hostname has no existing DNS record to import. The record is not applied. The route pattern ends in `/`, so it matches the hostname's root path; expand the route separately if the callback must accept other paths.
 
 ## Placeholder routing rule
 
