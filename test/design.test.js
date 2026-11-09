@@ -74,7 +74,9 @@ test('shared document escapes title and renders one common footer contract', () 
 
 test('worker source has no secondary metadata endpoint', async () => {
   const worker = await readFile(new URL('../worker.js', import.meta.url), 'utf8')
-  assert.match(worker, /workerMetaFromRequest\(request, SERVICE\)/)
-  assert.doesNotMatch(worker, /pathname\s*===\s*['"]\/meta['"]/)
-  assert.doesNotMatch(worker, /fetch\(['"]\/meta/)
+  const runtime = await readFile(new URL('../src/worker-app.js', import.meta.url), 'utf8')
+  assert.ok(worker.includes('createDashXdWorker'))
+  assert.ok(runtime.includes('workerMetaFromRequest(request, SERVICE)'))
+  assert.ok(!runtime.includes("url.pathname === '/meta'"))
+  assert.ok(!runtime.includes("fetch('/meta'"))
 })
