@@ -76,7 +76,7 @@ test('Worker module graph includes every relative import target', async () => {
     if (visited.has(relative)) continue
     visited.add(relative)
     const source = await readFile(new URL(relative, root), 'utf8')
-    const imports = [...source.matchAll(/from\\s+['"]([^'"]+)['"]/g)]
+    const imports = [...source.matchAll(/from\s+['"]([^'"]+)['"]/g)]
     for (const [, specifier] of imports) {
       if (!specifier.startsWith('.')) continue
       const target = resolve(dirname(new URL(relative, root).pathname), specifier)
