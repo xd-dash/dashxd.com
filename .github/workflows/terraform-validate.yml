@@ -1,0 +1,42 @@
+name: Terraform configuration validation
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "terraform/**"
+      - ".github/workflows/terraform-validate.yml"
+  push:
+    branches: [main]
+    paths:
+      - "terraform/**"
+      - ".github/workflows/terraform-validate.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        root:
+          - terraform/dns
+          - terraform/dns-inspect
+          - terraform/service-routes
+    steps:
+      - uses: actions/checkout@v6
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+          terraform_wrapper: false
+      - name: Check formatting
+        working-directory: ${{ matrix.root }}
+        run: terraform fmt -check -recursive
+      - name: Initialize provider schema without a backend
+        working-directory: ${{ matrix.root }}
+        run: terraform init -backend=false -input=false
+      - name: Validate configuration
+        working-directory: ${{ matrix.root }}
+        run: terraform validate -no-color

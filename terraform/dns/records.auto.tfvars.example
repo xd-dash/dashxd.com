@@ -1,0 +1,5 @@
+# Example desired DNS configuration. Keep empty until each new dashxd.com
+# hostname and its intended Pages site, Worker, or origin are explicitly mapped.
+# Existing root, www, FireKV, and service records are already live and are not
+# recreated here.
+records = {}
