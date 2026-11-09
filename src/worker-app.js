@@ -46,7 +46,7 @@ export function createDashXdWorker(logoDataUrl) {
       }
       if (url.pathname === '/logo') return logoResponse(request, logoDataUrl)
 
-      const match = /^\\/out\\/([a-z0-9-]+)\\/?$/.exec(url.pathname)
+      const match = /^\/out\/([a-z0-9-]+)\/?$/.exec(url.pathname)
       if (match) {
         const route = serviceRouteById(match[1])
         if (!route) return new Response('Not Found', { status: 404 })
