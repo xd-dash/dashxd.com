@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict'
+import { access, readFile } from 'node:fs/promises'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import test from 'node:test'
 
 import { createDashXdWorker } from '../src/worker-app.js'
@@ -62,4 +65,27 @@ test('non-GET/HEAD requests are rejected', async () => {
     assert.equal(response.status, 405)
     assert.equal(response.headers.get('allow'), 'GET, HEAD')
   }
+})
+
+test('Worker module graph includes every relative import target', async () => {
+  const root = new URL('../', import.meta.url)
+  const pending = ['worker.js']
+  const visited = new Set()
+  while (pending.length) {
+    const relative = pending.pop()
+    if (visited.has(relative)) continue
+    visited.add(relative)
+    const source = await readFile(new URL(relative, root), 'utf8')
+    const imports = [...source.matchAll(/from\\s+['"]([^'"]+)['"]/g)]
+    for (const [, specifier] of imports) {
+      if (!specifier.startsWith('.')) continue
+      const target = resolve(dirname(new URL(relative, root).pathname), specifier)
+      await access(target)
+      pending.push(target.slice(new URL(root).pathname.length))
+    }
+  }
+  assert.ok(visited.has('src/worker-app.js'))
+  assert.ok(visited.has('src/service-routes.js'))
+  assert.ok(visited.has('src/site.js'))
+  assert.ok(visited.has('src/design/index.js'))
 })
