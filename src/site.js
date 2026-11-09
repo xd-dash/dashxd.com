@@ -1,4 +1,10 @@
-import { renderDocument } from './design/index.js'
+import { escapeHtml, renderDocument } from './design/index.js'
+import { SERVICE_ROUTES } from './service-routes.js'
+
+const serviceLinks = SERVICE_ROUTES.map((service) => {
+  const href = '/out/' + encodeURIComponent(service.id)
+  return `<a class="link-button" href="${href}" target="_blank" rel="noopener noreferrer">${escapeHtml(service.name)}</a>`
+}).join('\n    ')
 
 const body = `
 <section class="menu-shell" aria-label="dash xd menu">
@@ -11,14 +17,7 @@ const body = `
   >&gt;_</button>
 
   <nav class="link-stack" aria-label="Primary links" data-primary-links>
-    <a class="link-button" href="#" data-outbound-target="console.dash.xd.run">console.dash.xd.run</a>
-    <a class="link-button" href="#" data-outbound-target="logma.sh">logma.sh</a>
-    <a class="link-button" href="#" data-outbound-target="chi.ninja">chi.ninja</a>
-    <a class="link-button" href="#" data-outbound-target="gospace.cloud">gospace.cloud</a>
-    <a class="link-button" href="#" data-outbound-target="gateway.us-west1.farcaster.world">gateway.us-west1.farcaster.world</a>
-    <a class="link-button" href="#" data-outbound-target="deploy.fatline.to">deploy.fatline.to</a>
-    <a class="link-button" href="#" data-outbound-target="firekv.com">firekv.com</a>
-    <a class="link-button" href="#" data-outbound-target="oidc.auth.net.im">oidc.auth.net.im</a>
+    ${serviceLinks}
   </nav>
 
   <section class="console-panel" id="console-panel" data-console-panel hidden aria-label="dash xd console">
@@ -48,7 +47,6 @@ const body = `
 </section>`
 
 const script = String.raw`
-const PLACEHOLDER_ORIGIN = 'https://placeholder.invalid'
 const BOT_MESSAGE_DELAY_MS = 650
 
 const INITIAL_BOT_MESSAGES = [
@@ -67,23 +65,6 @@ const MAINTENANCE_REPLY = [
   'under maintenance xd',
   'come back soon xd',
 ]
-
-function buildOutboundUrl(target) {
-  const source = new URL(window.location.href)
-  const outbound = new URL('/out/' + encodeURIComponent(target), PLACEHOLDER_ORIGIN)
-
-  outbound.searchParams.set('source_path', source.pathname)
-
-  for (const [key, value] of source.searchParams) {
-    outbound.searchParams.append(key, value)
-  }
-
-  if (source.hash) {
-    outbound.searchParams.set('source_hash', source.hash.slice(1))
-  }
-
-  return outbound.toString()
-}
 
 function delay(milliseconds) {
   return new Promise((resolve) => window.setTimeout(resolve, milliseconds))
@@ -164,15 +145,6 @@ function createChatController({ toggle, panel, transcript, composer, form, prima
   })
 }
 
-function initializeOutboundLinks() {
-  document.querySelectorAll('[data-outbound-target]').forEach((button) => {
-    button.addEventListener('click', (event) => {
-      event.preventDefault()
-      window.open(buildOutboundUrl(button.dataset.outboundTarget), '_blank', 'noopener,noreferrer')
-    })
-  })
-}
-
 function initializeConsole() {
   const toggle = document.querySelector('[data-console-toggle]')
   const panel = document.querySelector('[data-console-panel]')
@@ -186,7 +158,6 @@ function initializeConsole() {
   createChatController({ toggle, panel, transcript, composer, form, primaryLinks })
 }
 
-initializeOutboundLinks()
 initializeConsole()
 `
 
@@ -197,5 +168,18 @@ export function renderDashXdPage(meta) {
     meta,
     logoAlt: 'dashxd logo',
     script,
+  })
+}
+
+export function renderServicePlaceholder(meta, service) {
+  return renderDocument({
+    title: `${service.name} · dashxd.com`,
+    meta,
+    logoAlt: 'dashxd logo',
+    body: `<section class="content-shell">
+      <p class="body-copy">${escapeHtml(service.name)}</p>
+      <p class="body-copy">service placeholder · destination not configured</p>
+      <a class="link-button" href="/">back to dashxd.com</a>
+    </section>`,
   })
 }
