@@ -1,0 +1,44 @@
+{
+  "routes": [
+    {
+      "id": "console",
+      "name": "console.dash.xd.run",
+      "target": null
+    },
+    {
+      "id": "logma",
+      "name": "logma.sh",
+      "target": null
+    },
+    {
+      "id": "chi",
+      "name": "chi.ninja",
+      "target": null
+    },
+    {
+      "id": "gospace",
+      "name": "gospace.cloud",
+      "target": null
+    },
+    {
+      "id": "gateway",
+      "name": "gateway.us-west1.farcaster.world",
+      "target": null
+    },
+    {
+      "id": "deploy",
+      "name": "deploy.fatline.to",
+      "target": null
+    },
+    {
+      "id": "firekv",
+      "name": "firekv.com",
+      "target": null
+    },
+    {
+      "id": "oidc",
+      "name": "oidc.auth.net.im",
+      "target": null
+    }
+  ]
+}
